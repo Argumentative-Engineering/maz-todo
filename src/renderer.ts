@@ -83,7 +83,9 @@ function render() {
 
     const list = document.getElementById("task-list")
     list.innerHTML = '';
-    savedTasks.filter(t => currentFilter ? t.category === currentFilter : true).forEach((t, i) => {
+
+    if (savedTasks.length === 0) list.textContent = "no tasks!";
+    savedTasks.filter(t => !t.isDone && (currentFilter ? t.category === currentFilter : true)).forEach((t, i) => {
         const id = `TASK_${t.id}_${i}`;
 
         const li = document.createElement('li');
@@ -116,6 +118,7 @@ function render() {
     {
         categories.forEach((c) => {
             const btn = document.createElement('button') as HTMLButtonElement
+            btn.className = "category";
             btn.id = `${c}`;
             btn.textContent = `#${c}`;
             btn.addEventListener('click', e => {
@@ -135,8 +138,39 @@ function render() {
         currentFilter = '';
         render();
     })
+    clear.textContent = `filtering for: ${currentFilter}`;
 
     clear.hidden = !currentFilter
+
+    const doneList = document.getElementById("done-list");
+    doneList.innerHTML = "";
+    savedTasks.filter(t => t.isDone).forEach((t, i) => {
+        const id = `TASK_${t.id}_${i}`;
+
+        const li = document.createElement('li');
+        li.className = "task-content"
+        li.id = id
+        li.innerHTML = `<input type="checkbox" /><div class="content">${t.content}</div>`;
+
+        if (t.category) {
+            const category = document.createElement('span')
+            category.className = 'category'
+            category.innerText = `#${t.category}`;
+            li.querySelector(".content").append(category)
+        }
+
+        const check = li.querySelector("input") as HTMLInputElement
+        check.checked = t.isDone
+        check.addEventListener('change', () => {
+            setTaskDone(t, check.checked)
+            render()
+        })
+
+        if (t.isDone) li.classList.add('done');
+
+        doneList.append(li)
+    });
+
 }
 
 function setTaskDone(task: Task, done: boolean)
