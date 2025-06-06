@@ -1,22 +1,14 @@
 import { v4 as uuid } from 'uuid';
+import { Task }  from './tasks';
 
 import './index.css';
-
-type Task = {
-    id: string,
-    content: string,
-    category: string,
-    dateAdded: Date,
-    isDone: boolean
-    doneAt: Date,
-}
 
 let currentFilter: string = "";
 let savedTasks: Task[] = []
 let categories: string[] = []
 
-window.addEventListener('DOMContentLoaded', () => {
-    let tasks = loadTasks();
+window.addEventListener('DOMContentLoaded', async () => {
+    await loadTasks();
 
     const input = document.getElementById("task-input") as HTMLInputElement;
     const category = document.getElementById("task-category") as HTMLInputElement;
@@ -43,30 +35,30 @@ window.addEventListener('DOMContentLoaded', () => {
     render();
 });
 
-// @Todo load from file
-function loadTasks(): Task[] {
-    return savedTasks
+async function loadTasks() {
+    const t = await window.todoAPI.loadTasks();
+    savedTasks = t;
+
+    savedTasks.forEach(task => {
+        addCategory(task.category);
+    });
 }
 
 function addTask(content: string, category: string): [Task, boolean] {
-    if (content)
-    {
+    if (content) {
         const t: Task = {
             id: uuid(),
             content: content,
             dateAdded: new Date(),
             isDone: false,
             category: category,
+            doneAt: undefined
         }
 
-        if (category) {
-            if (!categories.includes(category)) {
-                categories.push(category)
-            }
-        }
+        addCategory(category);
 
         savedTasks.push(t)
-        save();
+        window.todoAPI.saveTasks(savedTasks);
 
         return [t, true];
     }
@@ -74,13 +66,13 @@ function addTask(content: string, category: string): [Task, boolean] {
     return [undefined, false];
 }
 
-function save(): boolean {
-    return false;
+function addCategory(category: string) {
+    if (category && !categories.includes(category)) {
+        categories.push(category)
+    }
 }
 
 function render() {
-    loadTasks();
-
     const list = document.getElementById("task-list")
     list.innerHTML = '';
 
@@ -116,7 +108,7 @@ function render() {
     categoriesList.innerHTML = '';
     if (categoriesList.childElementCount != categories.length)
     {
-        categories.forEach((c) => {
+        categories.sort().forEach((c) => {
             const btn = document.createElement('button') as HTMLButtonElement
             btn.className = "category";
             btn.id = `${c}`;
@@ -143,8 +135,12 @@ function render() {
     clear.hidden = !currentFilter
 
     const doneList = document.getElementById("done-list");
+    const done = savedTasks.filter(t => t.isDone).slice(0, 5);
+    
+    $( '.done>h3' ).text(`done (${done.length})`);
+
     doneList.innerHTML = "";
-    savedTasks.filter(t => t.isDone).forEach((t, i) => {
+    done.forEach((t, i) => {
         const id = `TASK_${t.id}_${i}`;
 
         const li = document.createElement('li');
@@ -171,10 +167,15 @@ function render() {
         doneList.append(li)
     });
 
+    const btnOnTop = $( "#btn-keep-on-top" )
+    btnOnTop.on( 'click', async () => {
+        const curr = await window.windowAPI.toggleOnTop();
+        btnOnTop.text(curr ? `[ON TOP]` : 'ON TOP');
+    });
 }
 
-function setTaskDone(task: Task, done: boolean)
-{
+function setTaskDone(task: Task, done: boolean) {
     task.isDone = done
     task.doneAt = done ? new Date() : null;
+    window.todoAPI.saveTasks(savedTasks);
 }

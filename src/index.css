@@ -3,10 +3,10 @@
 * {
   margin: 0;
   padding: 0;
-}
-body {
   font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica,
     Arial, sans-serif;
+}
+body {
   margin: auto;
   font-size: 24px;
   max-width: 38rem;
@@ -117,15 +117,43 @@ input[type="text"] {
     font-size: 20px;
     border: none;
     padding: 1rem 0.3rem;
+    max-width: 100%;
+
+    &#task-category{
+        font-size: 16px;
+        padding: 0.5rem 0.3rem;
+    }
 }
 
 button.category {
     border-radius: 15px;
     padding: 2px 5px;
+    cursor: pointer;
 }
 
 .done {
     h3 {
         font-size: large;
+    }
+}
+
+.settings {
+    font-size: smaller;
+    position: fixed;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    background-color: #e9e9e9;
+
+    padding: 5px 10px;
+
+    button {
+        background: none;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        font-weight: bold;
+        color: #555;
     }
 }

@@ -1,6 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import path from 'node:path';
 import started from 'electron-squirrel-startup';
+import { save, load } from './tasks';
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (started) {
@@ -17,6 +18,19 @@ const createWindow = () => {
     },
     autoHideMenuBar: true
   });
+
+  ipcMain.handle('load-tasks', async (e, a) => {
+      return load();
+  });
+  ipcMain.on('save-tasks', (e, t) => save(t));
+
+  ipcMain.handle('toggle-always-on-top', async () => {
+    if (!mainWindow) return;
+    const top = !mainWindow.isAlwaysOnTop();
+    mainWindow.setAlwaysOnTop(top);
+    console.log('settings: set always on top to: ' + top);
+    return top;
+  })
 
   // and load the index.html of the app.
   if (MAIN_WINDOW_VITE_DEV_SERVER_URL) {

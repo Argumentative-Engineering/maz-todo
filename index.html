@@ -9,20 +9,26 @@
         <script src="/src/jquery-ui/jquery-ui.min.js"></script>
     </head>
     <body>
-        <div id="categories"></div>
-        <button id="clear-filter">x clear filter</button>
-        <ul id="task-list"></ul>
-
-        <form id="task-form" autocomplete="off">
+         <form id="task-form" autocomplete="off">
             <input type="text" id="task-input" required placeholder="Task here" autofocus />
 
             <input type="text" id="task-category" placeholder="category" />
             <input type="submit" hidden />
         </form>
 
+       <div id="categories"></div>
+        <button id="clear-filter">x clear filter</button>
+        <ul id="task-list"></ul>
+
         <section class="done">
             <h3>done</h3>
             <div id="done-list">
+            </div>
+        </section>
+
+        <section class="settings">
+            <div class="settings-btns">
+                <button id="btn-keep-on-top">[ON TOP]</button>
             </div>
         </section>
 
