@@ -19,3 +19,5 @@ jobs:
 
       - name: build da app
         uses: yinxulai/actions-electron-forge@0.05
+        with:
+          github_token: ${{ secrets.github_token }}
