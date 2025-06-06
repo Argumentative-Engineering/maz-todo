@@ -1,6 +1,9 @@
 name: Build/release
 
-on: push
+on: 
+  push:
+    tags:
+      - 'v*.*.*'
 
 jobs:
   release:
@@ -12,12 +15,21 @@ jobs:
 
     steps:
       - name: Checkout git
-        uses: actions/checkout@v1
+        uses: actions/checkout@v4
 
       - name: Install Node
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v4
 
-      - name: build da app
-        uses: yinxulai/actions-electron-forge@0.05
+      - name: install deps
+        run: npm ci
+
+      - name: build
+        run: npm run make
+
+      - name: upload build
+        uses: softprops/action-gh-release@v2
         with:
-          github_token: ${{ secrets.github_token }}
+          files: |
+            out/**/*
+          env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

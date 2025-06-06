@@ -1,8 +1,8 @@
 {
   "name": "basic-todo",
-  "productName": "basic-todo",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "productName": "Basic::Todo",
+  "version": "1.1.0",
+  "description": "maz's ultimate cheeseburger",
   "main": ".vite/build/main.js",
   "scripts": {
     "start": "electron-forge start",
