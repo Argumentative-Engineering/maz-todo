@@ -1,5 +1,5 @@
-import path from "node:path";
 import fs from "node:fs";
+import { TASKS_PATH } from "./app";
 
 export type Task = {
     id: string,
@@ -8,14 +8,14 @@ export type Task = {
     dateAdded: Date,
     isDone: boolean
     doneAt: Date,
+
+    hidden: boolean,
 }
 
 export const load = (): Task[] => {
-    const fpath = path.join(require('os').homedir(), 'maztodo.json');
-
     try {
-        if (!fs.existsSync(fpath)) return [];
-        const data = fs.readFileSync(fpath, 'utf-8');
+        if (!fs.existsSync(TASKS_PATH)) return [];
+        const data = fs.readFileSync(TASKS_PATH, 'utf-8');
         return JSON.parse(data) as Task[];
     } catch (err) {
         console.error('error reading todo file', err);
@@ -24,8 +24,7 @@ export const load = (): Task[] => {
 }
 
 export const save = (tasks: Task[]) => {
-    const fpath = path.join(require('os').homedir(), 'maztodo.json');
-    fs.writeFile(fpath, JSON.stringify(tasks, null, 2), err => {
+    fs.writeFile(TASKS_PATH, JSON.stringify(tasks, null, 2), err => {
         if (err) {
             console.error('error saving file', err)
             return false;
@@ -36,4 +35,3 @@ export const save = (tasks: Task[]) => {
     });
     return false;
 }
-

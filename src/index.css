@@ -21,7 +21,7 @@ body {
 #task-list, section>#done-list {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 1rem;
 }
 
 section.done {
@@ -49,6 +49,7 @@ section.done {
     border-radius: 50%;
     outline: none;
   }
+
   input:checked {
     background-color: #eee;
   }
@@ -59,6 +60,11 @@ section.done {
     align-items: end;
     justify-content: space-between;
     width: 100%;
+
+    p {
+        min-width: 1rem;
+        overflow-wrap: anywhere;
+    }
 
     span {
       font-size: small;
@@ -135,6 +141,7 @@ button.category {
 .done {
     h3 {
         font-size: large;
+        cursor: pointer;
     }
 }
 
