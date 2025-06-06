@@ -1,4 +1,5 @@
 import { v4 as uuid } from 'uuid';
+import $ from 'jquery'
 import { Task }  from './tasks';
 
 import './index.css';
@@ -27,9 +28,9 @@ window.addEventListener('DOMContentLoaded', async () => {
         }
     });
 
-    $( "#task-category" ).autocomplete({
-        source: categories
-    });
+    // $( "#task-category" ).autocomplete({
+    //     source: categories
+    // });
 
     // render tasks
     render();

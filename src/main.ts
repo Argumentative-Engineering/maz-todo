@@ -17,8 +17,6 @@ const createWindow = () => {
       preload: path.join(__dirname, 'preload.js'),
     },
     autoHideMenuBar: true,
-    titleBarStyle: 'hidden',
-    ...(process.platform !== 'darwin' ? { titleBarOverlay: true } : {})
   });
 
   ipcMain.handle('load-tasks', async (e, a) => {
