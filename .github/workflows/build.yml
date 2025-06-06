@@ -31,5 +31,3 @@ jobs:
         with:
           files: |
             out/**/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
