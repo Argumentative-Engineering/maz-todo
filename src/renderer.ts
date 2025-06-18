@@ -36,9 +36,23 @@ async function loadTasks() {
     const t = await window.todoAPI.loadTasks();
     savedTasks = t;
 
+    const cats: Record<string, Task[]> = {};
+
     savedTasks.forEach(task => {
+        if (!task.isDone && !task.hidden) {
+            if (!cats[task.category]) {
+                cats[task.category] = [];
+            }
+            cats[task.category].push(task);
+        }
         addCategory(task.category);
     });
+
+    for (const cat in cats) {
+        cats[cat]
+            .sort((a,b) => a.orderInCategory - b.orderInCategory)
+            .forEach((t, i) => t.orderInCategory = i );
+    }
 }
 
 function addTask(content: string, category: string): [Task, boolean] {
@@ -107,7 +121,10 @@ function render() {
     list.empty()
 
     categories.filter(c => !currentFilter || currentFilter === c).forEach(cat => {
-        const tasks = savedTasks.filter(t => !t.isDone && t.category === cat && !t.hidden);
+        let order = 0;
+        const tasks = savedTasks
+                        .filter(t => !t.isDone && t.category === cat && !t.hidden)
+                        .sort((a,b) => a.orderInCategory - b.orderInCategory);
         if (tasks.length == 0) return;
 
         const $section = $('<section class="task-section">')
@@ -118,7 +135,7 @@ function render() {
             const $li = $(`<li id="TASK_${t.id}_${i}" class="task-content"></li>`)
             $li.html(`<input type="checkbox" /><div class="content"><p>${t.content}</p></div>`);
 
-            const $cat = $(`<span class="category">#${cat}</span>`)
+            const $cat = $(`<div class="right"><div class="controls"><button id="up">▲</button><button id="down">▼</button></div><span class="category">#${cat}</span></div>`);
 
             $li.find('.content').append($cat);
 
@@ -128,6 +145,19 @@ function render() {
                 setTaskDone(t, $(this).is(':checked'))
                 render();
             })
+
+            const $up = $cat.find('button#up')
+            $up.on('click', function(){
+                moveTask(t, -1, tasks);
+                render();
+            });
+
+            const $down = $cat.find('button#down')
+            $down.on('click', function(){
+                moveTask(t, 1, tasks);
+                render();
+            })
+
 
             $section.append($li);
         })
@@ -192,6 +222,21 @@ function render() {
     });
 
     renderSettings();
+}
+
+function moveTask(task: Task, direction: number, siblings: Task[])  {
+    const i = siblings.indexOf(task);
+    const targ = i + direction;
+
+    if (targ < 0 || targ >= siblings.length) {
+        return;
+    }
+
+    const swp = siblings[i].orderInCategory;
+    siblings[i].orderInCategory = siblings[targ].orderInCategory;
+    siblings[targ].orderInCategory = swp;
+    
+    window.todoAPI.saveTasks(savedTasks);
 }
 
 function setTaskDone(task: Task, done: boolean) {

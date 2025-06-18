@@ -8,6 +8,8 @@ export type Task = {
     dateAdded: Date,
     isDone: boolean
     doneAt: Date,
+    
+    orderInCategory: number;
 
     hidden: boolean,
 }

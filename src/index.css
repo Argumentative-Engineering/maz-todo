@@ -68,7 +68,37 @@ section.done {
 
     span {
       font-size: small;
+    }
+    
+    .right {
       margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .controls {
+        font-size: small;
+        display: flex;
+        gap: 5px;
+        
+        button {
+            border: none;
+            color: gray;
+            background: none;
+            opacity: 0;
+            cursor: pointer;
+
+            &:hover {
+                color: black;
+            }
+        }
+    }
+
+    &:hover {
+        .controls button {
+            opacity: 1;
+        }
     }
   }
 
@@ -76,6 +106,12 @@ section.done {
     text-decoration: line-through;
     color: gray;
   }
+}
+
+.task-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 }
 
 #categories {
